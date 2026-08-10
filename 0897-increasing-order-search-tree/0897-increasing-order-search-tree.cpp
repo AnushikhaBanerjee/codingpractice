@@ -1,0 +1,37 @@
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+class Solution {
+public:
+    TreeNode* increasingBST(TreeNode* root) {
+        TreeNode* dummy = new TreeNode(-1); // temporary node
+        TreeNode* curr = dummy;             // pointer to build the new tree
+        inorder(root, curr);
+        return dummy->right; // skip dummy, return actual new root
+    }
+    
+    void inorder(TreeNode* node, TreeNode*& curr) {
+        if (!node) return;
+        
+        inorder(node->left, curr);   // left subtree
+        
+        node->left = nullptr;        // remove left child
+        curr->right = node;          // attach current node to the right
+        curr = node;                 // move pointer forward
+        
+        inorder(node->right, curr);  // right subtree
+    }
+};
+
+
+// Synced seamlessly with LeetHub Pro
+// Pro features: https://bit.ly/leethubpro | Free version: https://bit.ly/leethubv4
+// Get it here: https://chromewebstore.google.com/detail/bcilpkkbokcopmabingnndookdogmbna
