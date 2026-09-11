@@ -1,42 +1,43 @@
-/**
- * Definition for a binary tree node.
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
- *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
- *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
- * };
- */
+#include <queue>
+using namespace std;
+
 class Solution {
 public:
     bool isCousins(TreeNode* root, int x, int y) {
-        TreeNode*parentX=nullptr;
-        TreeNode*parentY=nullptr;
-        int depthX=-1, depthY=-1;
-        dfs(root,nullptr,0,x,parentX,depthX);
-        dfs(root,nullptr,0,y,parentY,depthY);
-        return(depthX==depthY)&&(parentX!=parentY);
-    }
-    private:
-    void dfs(TreeNode* node,TreeNode*parent,int depth, int target, TreeNode*& parentOut, int& depthOut){
-        if (!node) return;
+        if (!root) return false;
 
-        if (node->val == target) {
-            parentOut = parent;
-            depthOut = depth;
-            return;
+        queue<pair<TreeNode*, TreeNode*>> q; 
+        // pair: (node, parent)
+        q.push({root, nullptr});
+
+        while (!q.empty()) {
+            int size = q.size();
+            TreeNode* parentX = nullptr;
+            TreeNode* parentY = nullptr;
+
+            for (int i = 0; i < size; i++) {
+                auto [node, parent] = q.front();
+                q.pop();
+
+                if (node->val == x) parentX = parent;
+                if (node->val == y) parentY = parent;
+
+                if (node->left) q.push({node->left, node});
+                if (node->right) q.push({node->right, node});
+            }
+
+            // After finishing one level
+            if (parentX && parentY) {
+                return parentX != parentY; // same depth, different parents
+            }
+            if (parentX || parentY) {
+                return false; // found only one at this depth
+            }
         }
 
-        dfs(node->left, node, depth + 1, target, parentOut, depthOut);
-        dfs(node->right, node, depth + 1, target, parentOut, depthOut);
+        return false;
     }
 };
-    
-
-        
-    
 
 
 // Synced seamlessly with LeetHub Pro
